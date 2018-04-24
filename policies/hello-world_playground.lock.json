@@ -1,0 +1,51 @@
+{
+  "revision_id": "e352d4c2c1e20c28bc35d1b2153422f070948deba58acfc7eb3f59f0e54885c4",
+  "name": "hello-world",
+  "run_list": [
+    "recipe[hello-web-world::default]"
+  ],
+  "included_policy_locks": [
+
+  ],
+  "cookbook_locks": {
+    "hello-web-world": {
+      "version": "1.0.0",
+      "identifier": "c5bb66931637706133d60ef7421ef22bb9be4aec",
+      "dotted_decimal_identifier": "55656619640764272.27360067208036894.266269613771500",
+      "source": "../cookbooks/hello-web-world",
+      "cache_key": null,
+      "scm_info": {
+        "scm": "git",
+        "remote": null,
+        "revision": null,
+        "working_tree_clean": false,
+        "published": false,
+        "synchronized_remote_branches": [
+
+        ]
+      },
+      "source_options": {
+        "path": "../cookbooks/hello-web-world"
+      }
+    }
+  },
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "solution_dependencies": {
+    "Policyfile": [
+      [
+        "hello-web-world",
+        "= 1.0.0"
+      ]
+    ],
+    "dependencies": {
+      "hello-web-world (1.0.0)": [
+
+      ]
+    }
+  }
+}

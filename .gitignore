@@ -1,0 +1,9 @@
+*.DS_Store*
+
+.idea
+.vagrant
+provision/chef-server-tls.crt
+.chef/checksums
+.chef/trusted_certs
+provision/*.crt
+provision/*.key

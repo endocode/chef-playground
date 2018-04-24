@@ -1,0 +1,36 @@
+---
+driver:
+  name: vagrant
+  vagrantfiles: []
+  customize:
+    memory: 1024
+
+  network:
+  -
+    - private_network
+    - ip: 10.22.22.101
+  -
+    - forwarded_port
+    - host: 80
+      guest: 80
+  provision: false
+  synced_folders: []
+  vm_hostname: chef-zero-node
+
+
+provisioner:
+  name: chef_zero
+  # You may wish to disable always updating cookbooks in CI or other testing environments.
+  # For example:
+  #   always_update_cookbooks: <%= !ENV['CI'] %>
+  always_update_cookbooks: true
+
+platforms:
+  - name: centos-7
+    driver:
+      box: bento/centos-7
+
+suites:
+  - name: dev
+    provisioner:
+      policyfile: ./policies/policy_dev.rb
