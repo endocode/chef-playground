@@ -109,7 +109,7 @@ Vagrant.configure("2") do |config|
 
   (1..LINUX_NODES).each do |i|
 
-    config.vm.define "chef-node-linux-#{ i }" do |node|
+    config.vm.define "chef-linux-node-#{ i }" do |node|
       ipSuffix = 100 + i
       instance_ip = "#{NETWORK_SLASH24_PREFIX}.#{ipSuffix}"
       hostname = "linux-node-#{ i }"
@@ -180,7 +180,7 @@ Vagrant.configure("2") do |config|
                         inline: "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
       node.vm.provision "shell",
-                        path: "#{DIR}/shell/provision_chef-node_win.ps1",
+                        path: "#{PROVISION_ROOT_PATH}/shell/provision_chef-node_win.ps1",
                         privileged: true,
                         args: [ MOUNT_PATH_WIN ]
 
