@@ -61,6 +61,11 @@ accordingly, otherwise enable the configuration: `ssl_verify_mode :verify_none`*
 *NOTE: linux nodes are bootstrapped and registered with the server automatically, whereas windows 
 nodes need a jump start with `knife bootstrap`*
 
+```bash
+#bootstrap windows node
+knife bootstrap windows winrm 10.11.11.201 --winrm-user chef --winrm-password chef --node-name windows-0 --node-ssl-verify-mode none
+```
+
 
 ## Usage
 
@@ -86,7 +91,7 @@ so, please follow:
 
 1. Connect to the desired machine
 ```bash
-vagrant ssh chef-node-linux-${NUMBER}
+vagrant ssh chef-linux-node-${NUMBER}
 ```
 2. ...and change the chef client configuration
 ```bash
