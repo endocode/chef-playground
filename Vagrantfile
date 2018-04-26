@@ -10,7 +10,7 @@ REMOTE_SOURCE_PATH_WIN = "C:\\tmp\\provision"
 MOUNT_PATH_LINUX = "/mnt/host"
 MOUNT_PATH_WIN = "C:\\host"
 COMMON_PROVISION_SCRIPTS_LINUX = [ "common-dependencies_centos.sh" ]
-COMMON_PROVISION_SCRIPTS_WINDOWS = [ "common-dependencies_win.ps1" ]
+COMMON_PROVISION_SCRIPTS_WIN = [ "common-dependencies_win.bat" ]
 
 
 load "#{DIR}/playground.conf"
@@ -157,12 +157,22 @@ Vagrant.configure("2") do |config|
       instance_ip = "#{NETWORK_SLASH24_PREFIX}.#{ipSuffix}"
       hostname = "windows-node-#{ i }"
 
+      provision_scripts = Array.new(COMMON_PROVISION_SCRIPTS_WIN).push(
+        "install-chef-user_win.ps1",
+        "provision_chef-node_win.bat"
+      )
+      asset_files = [
+        "assets/win/secconfig.cfg",
+        "assets/chef/client.rb"
+      ]
+
       node.vm.box = "opentable/win-2012r2-standard-amd64-nocm"
 
       node.vm.provider "virtualbox" do |vb|
         vb.name = hostname
         vb.memory = '2048'
-        vb.customize ['modifyvm', :id, '--memory', '2048']
+        vb.customize [ 'modifyvm', :id, '--memory', '2048' ]
+        vb.customize [ 'modifyvm', :id, '--vram', '16' ]
         vb.cpus = 1
       end
 
@@ -174,15 +184,32 @@ Vagrant.configure("2") do |config|
       node.vm.synced_folder "#{DIR}", "/vagrant", disabled: true
       node.vm.synced_folder PROVISION_ROOT_PATH, MOUNT_PATH_WIN, type: "virtualbox"
 
+      asset_files.each do |relFilePath|
+        filename = File.basename(relFilePath)
+        node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/#{relFilePath}", destination: "#{REMOTE_SOURCE_PATH_WIN}/#{filename}"
+      end
+      node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/../playground.conf", destination: "#{REMOTE_SOURCE_PATH_WIN}/playground.conf"
+      # convert conf.env to work with windows
+      node.vm.provision "shell",
+                        privileged: true,
+                        inline: "cmd.exe /c \"TYPE #{REMOTE_SOURCE_PATH_WIN}\\playground.conf | MORE /P > #{REMOTE_SOURCE_PATH_WIN}\\conf.env && DEL #{REMOTE_SOURCE_PATH_WIN}\\playground.conf\""
+
       # NOTE: install chocolatey
       node.vm.provision "shell",
                         privileged: true,
                         inline: "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
-      node.vm.provision "shell",
-                        path: "#{PROVISION_ROOT_PATH}/shell/provision_chef-node_win.ps1",
-                        privileged: true,
-                        args: [ MOUNT_PATH_WIN ]
+      provision_scripts.each do |script|
+        node.vm.provision "shell",
+                          path: "#{PROVISION_ROOT_PATH}/shell/#{script}",
+                          privileged: true,
+                          args: [
+                            REMOTE_SOURCE_PATH_WIN,
+                            MOUNT_PATH_WIN,
+                            CHEF_SERVER_IP
+                          ]
+      end
+
 
     end
   end

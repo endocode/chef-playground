@@ -2,8 +2,11 @@ Chef Playground
 =========================
 
 
-Primary goal here is to create an environment where you can focus on developing our infrastructure
-configurations (everything that goes in a `chef-repo`)
+The primary goal here is to create an environment where you can focus on developing your 
+infrastructure configurations (everything that goes in a `chef-repo`). Instead of going down the 
+virtualization rabbit hole (this repository), you might want to consider using 
+[Chef-Zero](https://github.com/chef/chef-zero) or going all 
+[node-only](https://medium.com/@emachnic/using-policyfiles-with-chef-client-local-mode-4f47477b24db)
 
 
 __Prerequisites:__
@@ -14,7 +17,7 @@ __Prerequisites:__
 You might also want to install `Chef DK`, which is necessary if you plan to use your host system as
 the *workstation* (incl. `knife`).
 Additionally, since the root of this repository contains a `.chef/` directory, it is also meant to
-be used as your chef-repo, so you probably what to add some more folders like `coockbooks` or 
+be used as your chef-repo, thus, you probably want to add some more folders like `coockbooks` or 
 `data_bags`.
 
 
@@ -28,7 +31,7 @@ Will spin up at least one vm (chef-server), usually more (one linux and one wind
 
 ### Kitchen
 
-Uses CHef-Zero (in-memory Chef Server) and Vagrant (for the nodes) to apply your configuration
+Uses Chef-Zero (in-memory Chef Server) and Vagrant (for the nodes) to apply your configuration
 
 
 ## Installation
@@ -68,6 +71,15 @@ knife bootstrap windows winrm 10.11.11.201 --winrm-user chef --winrm-password ch
 
 
 ## Usage
+
+### Nodes
+
+How may nodes get spawned is totally up to you. Adjust the amount in `playground.conf`. The 
+`chef-client` on every node ist not executed automatically on a regular basis (daemonized). That's 
+what the `DAEMONIZE_CHEF_CLIENT` flag is for. Though, on Linux nodes you can simply go into the node
+and enable the systemd service `chef-client` to activate this desired behaviour. Change the interval
+in `/etc/chef/client.rb` and restart the service.
+
 
 ### Virtual Workstation
 

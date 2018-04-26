@@ -38,7 +38,13 @@ chown "${CHEF_NODE_USER}:${CHEF_NODE_GROUP}" -R \
 cp -rf "${DIR}/conf.env" "${CHEF_NODE_CONF_DIR}/"
 cp -rf "${DIR}/chef-client.unit" "/etc/systemd/system/chef-client.service"
 chown root:root "/etc/systemd/system/chef-client.service"
-systemctl enable chef-client.service
-systemctl start chef-client.service
+if [ "${DAEMONIZE_CHEF_CLIENT}" = true ]; then
+    systemctl enable chef-client.service
+    systemctl start chef-client.service
+fi
+
 
 echo "${CHEF_SERVER_IP} ${CHEF_SERVER_NAME}" >> /etc/hosts
+
+
+/usr/bin/chef-client --once
