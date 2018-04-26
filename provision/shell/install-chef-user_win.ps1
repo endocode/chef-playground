@@ -1,6 +1,10 @@
 $REMOTE_SOURCE_PATH = $args[0].Trim()
 $MOUNT_PATH = $args[1].Trim()
 
+# importing configuration variables
+. "$REMOTE_SOURCE_PATH\conf.env.ps1"
+
+
 secedit.exe /configure /db C:\Windows\security\new.sdb /cfg $REMOTE_SOURCE_PATH\secconfig.cfg /areas SECURITYPOLICY
 
 $Username = "chef"

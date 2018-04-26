@@ -159,11 +159,11 @@ Vagrant.configure("2") do |config|
 
       provision_scripts = Array.new(COMMON_PROVISION_SCRIPTS_WIN).push(
         "install-chef-user_win.ps1",
-        "provision_chef-node_win.bat"
+        "bootstrap_chef-node_win.bat"
       )
       asset_files = [
         "assets/win/secconfig.cfg",
-        "assets/chef/client.rb"
+        "assets/chef/client_win.rb"
       ]
 
       node.vm.box = "opentable/win-2012r2-standard-amd64-nocm"
@@ -174,6 +174,7 @@ Vagrant.configure("2") do |config|
         vb.customize [ 'modifyvm', :id, '--memory', '2048' ]
         vb.customize [ 'modifyvm', :id, '--vram', '16' ]
         vb.cpus = 1
+        vb.gui = false
       end
 
       node.vm.hostname = hostname
@@ -188,13 +189,17 @@ Vagrant.configure("2") do |config|
         filename = File.basename(relFilePath)
         node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/#{relFilePath}", destination: "#{REMOTE_SOURCE_PATH_WIN}/#{filename}"
       end
-      node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/../playground.conf", destination: "#{REMOTE_SOURCE_PATH_WIN}/playground.conf"
+      node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/../playground.conf", destination: "#{REMOTE_SOURCE_PATH_WIN}/conf.env"
+
       # convert conf.env to work with windows
       node.vm.provision "shell",
+                        path: "#{PROVISION_ROOT_PATH}/shell/convert-configuration-file_win.ps1",
                         privileged: true,
-                        inline: "cmd.exe /c \"TYPE #{REMOTE_SOURCE_PATH_WIN}\\playground.conf | MORE /P > #{REMOTE_SOURCE_PATH_WIN}\\conf.env && DEL #{REMOTE_SOURCE_PATH_WIN}\\playground.conf\""
+                        args: [
+                          "#{REMOTE_SOURCE_PATH_WIN}\\conf.env"
+                        ]
 
-      # NOTE: install chocolatey
+      # # NOTE: install chocolatey
       node.vm.provision "shell",
                         privileged: true,
                         inline: "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
