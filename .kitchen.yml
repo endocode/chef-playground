@@ -33,4 +33,4 @@ platforms:
 suites:
   - name: dev
     provisioner:
-      policyfile: ./policies/policy_dev.rb
+      policyfile: ./policies/hello-world_playground.rb

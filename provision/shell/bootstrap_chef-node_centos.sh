@@ -25,14 +25,11 @@ curl --output "${CHEF_CLIENT_INSTALL_SCRIPT_FILE_PATH}" \
 bash "${CHEF_CLIENT_INSTALL_SCRIPT_FILE_PATH}" -v "${CHEF_CLIENT_VERSION}"
 
 
-groupadd --gid 888 --system "${CHEF_NODE_GROUP}"
-adduser --uid 888 --gid 888 --no-create-home --system "${CHEF_NODE_USER}"
-
 mkdir -p "${CHEF_NODE_CONF_DIR}" "${CHEF_NODE_DIR_CACHE}" "${CHEF_NODE_DIR_BACKUP}"
 cp -rf "${DIR}/client.rb" "${CHEF_NODE_CONF_DIR}/"
 cp -rf "${HOST_SHARE}/${ORGA_NAME}_org.key" "${CHEF_NODE_CONF_DIR}/"
 cp -rf "${HOST_SHARE}/chef-server-tls.crt" "${CHEF_NODE_CONF_DIR}/"
-chown "${CHEF_NODE_USER}:${CHEF_NODE_GROUP}" -R \
+chown "${PLATFORM_USER_NAME}:${PLATFORM_USER_GROUP}" -R \
     "${CHEF_NODE_CONF_DIR}" "${CHEF_NODE_DIR_CACHE}" "${CHEF_NODE_DIR_BACKUP}"
 
 cp -rf "${DIR}/conf.env" "${CHEF_NODE_CONF_DIR}/"

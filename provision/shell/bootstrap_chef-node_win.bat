@@ -37,7 +37,7 @@ msiexec /qn /i %CHEF_CLIENT_INSTALL_MSI_PATH% ADDLOCAL=%INSTALLER_CONFIG%
 
 mkdir "%CHEF_CONF_DIR%"
 copy "%SOURCE_PATH%\conf.env" "%CHEF_CONF_DIR%\" /y
-copy "%SOURCE_PATH%\client_win.rb" "%CHEF_CONF_DIR%\\client.rb" /y
+copy "%SOURCE_PATH%\client.rb" "%CHEF_CONF_DIR%\\client.rb" /y
 copy "%MOUNT_PATH%\chef-server-tls.crt" "%CHEF_CONF_DIR%\" /y
 copy "%MOUNT_PATH%\%ORGA_NAME%_org.key" "%CHEF_CONF_DIR%\" /y
 

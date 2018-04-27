@@ -1,22 +1,23 @@
-$CONF_FILE_PATH = $args[0].Trim()
+$confFilePath = $args[0].Trim()
 
-cmd.exe /c "move /y $CONF_FILE_PATH $CONF_FILE_PATH.tmp"
-cmd.exe /c "TYPE $CONF_FILE_PATH.tmp | MORE /P > $CONF_FILE_PATH && DEL $CONF_FILE_PATH.tmp"
+cmd.exe /c "move /y $confFilePath $confFilePath.tmp"
+cmd.exe /c "TYPE $confFilePath.tmp | MORE /P > $confFilePath && DEL $confFilePath.tmp"
 
-(Get-Content $CONF_FILE_PATH) | % {
+(Get-Content $confFilePath) | % {
     if( $_.Length -gt 0 ){
         $str = $_ -replace '"', ''
         return "SET $str"
     } else {
         return $_
     }
-} | Set-Content "$CONF_FILE_PATH.bat"
+} | Set-Content "$confFilePath.bat"
 
-(Get-Content $CONF_FILE_PATH) | % {
+(Get-Content $confFilePath) | % {
     if( $_.Length -gt 0 ){
         $str = $_ -replace '=true', '=$true' -replace '=false', '=$false'
         return "`$$str"
     } else {
         return $_
     }
-} | Set-Content "$CONF_FILE_PATH.ps1"
+} | Set-Content "$confFilePath.ps1"
+

@@ -29,6 +29,7 @@ Vagrant.configure("2") do |config|
 
 
   config.vm.define CHEF_SERVER_NAME do |node|
+
     instance_ip = CHEF_SERVER_IP
     hostname = CHEF_SERVER_NAME
 
@@ -62,13 +63,14 @@ Vagrant.configure("2") do |config|
                         inline: "#{REMOTE_SOURCE_PATH_LINUX}/#{script}",
                         privileged: true
     end
+
   end
 
 
 
   if CREATE_WORKSTATION
-
     config.vm.define "chef-workstation" do |node|
+
       instance_ip = CHEF_WORKSTATION_IP
       hostname = "workstation"
 
@@ -89,20 +91,21 @@ Vagrant.configure("2") do |config|
 
       node.vm.synced_folder "#{DIR}", "/vagrant", disabled: true
       node.vm.synced_folder PROVISION_ROOT_PATH, MOUNT_PATH_LINUX, type: "virtualbox"
-      node.vm.synced_folder "#{DIR}", "~/chef-repo", type: "virtualbox"
+      node.vm.synced_folder "#{DIR}", "/home/vagrant/chef-repo", type: "virtualbox", owner: 'vagrant'
 
       provision_scripts.each do |script|
         filename = script.split(' ').first
         node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/shell/#{filename}", destination: "#{REMOTE_SOURCE_PATH_LINUX}/#{filename}"
       end
+      node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/../playground.conf", destination: "#{REMOTE_SOURCE_PATH_LINUX}/conf.env"
 
       provision_scripts.each do |script|
         node.vm.provision "shell",
                           inline: "#{REMOTE_SOURCE_PATH_LINUX}/#{script}",
                           privileged: true
       end
-    end
 
+    end
   end
 
 
@@ -138,7 +141,7 @@ Vagrant.configure("2") do |config|
       end
       node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/../playground.conf", destination: "#{REMOTE_SOURCE_PATH_LINUX}/conf.env"
       node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/assets/linux/chef-client.unit", destination: "#{REMOTE_SOURCE_PATH_LINUX}/chef-client.unit"
-      node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/assets/chef/client.rb", destination: "#{REMOTE_SOURCE_PATH_LINUX}/client.rb"
+      node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/assets/chef/client_linux.rb", destination: "#{REMOTE_SOURCE_PATH_LINUX}/client.rb"
 
       provision_scripts.each do |script|
         node.vm.provision "shell",
@@ -153,6 +156,7 @@ Vagrant.configure("2") do |config|
 
   (1..WINDOWS_NODES).each do |i|
     config.vm.define "chef-windows-node-#{i}".to_sym do |node|
+
       ipSuffix = 200 + i
       instance_ip = "#{NETWORK_SLASH24_PREFIX}.#{ipSuffix}"
       hostname = "windows-node-#{ i }"
@@ -162,8 +166,7 @@ Vagrant.configure("2") do |config|
         "bootstrap_chef-node_win.bat"
       )
       asset_files = [
-        "assets/win/secconfig.cfg",
-        "assets/chef/client_win.rb"
+        "assets/win/secconfig.cfg"
       ]
 
       node.vm.box = "opentable/win-2012r2-standard-amd64-nocm"
@@ -190,6 +193,10 @@ Vagrant.configure("2") do |config|
         node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/#{relFilePath}", destination: "#{REMOTE_SOURCE_PATH_WIN}/#{filename}"
       end
       node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/../playground.conf", destination: "#{REMOTE_SOURCE_PATH_WIN}/conf.env"
+      node.vm.provision "file", source: "#{PROVISION_ROOT_PATH}/assets/chef/client_win.rb", destination: "#{REMOTE_SOURCE_PATH_WIN}/client.rb"
+      node.vm.provision "shell",
+                        privileged: true,
+                        inline: "Add-Content #{REMOTE_SOURCE_PATH_WIN}\\client.rb \"`nnode_name               '#{hostname}'\""
 
       # convert conf.env to work with windows
       node.vm.provision "shell",
@@ -214,7 +221,6 @@ Vagrant.configure("2") do |config|
                             CHEF_SERVER_IP
                           ]
       end
-
 
     end
   end

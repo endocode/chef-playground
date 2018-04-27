@@ -19,9 +19,9 @@ data_collector.mode     :client
 
 interval                10    # seconds, default: 1800
 
-#user                    CHEF_NODE_USER
-#group                   CHEF_NODE_GROUP
-cache_path              "/home/#{CHEF_NODE_USER}"
+#user                    PLATFORM_USER_NAME
+#group                   PLATFORM_USER_GROUP
+cache_path              "/home/#{PLATFORM_USER_NAME}"
 
 #use_policyfile          true
 #policy_name             'hello-world'   # role

@@ -7,8 +7,8 @@ $MOUNT_PATH = $args[1].Trim()
 
 secedit.exe /configure /db C:\Windows\security\new.sdb /cfg $REMOTE_SOURCE_PATH\secconfig.cfg /areas SECURITYPOLICY
 
-$Username = "chef"
-$Password = "chef"
+$Username = $PLATFORM_USER_NAME
+$Password = $PLATFORM_USER_PW
 
 $group = "Administrators"
 
